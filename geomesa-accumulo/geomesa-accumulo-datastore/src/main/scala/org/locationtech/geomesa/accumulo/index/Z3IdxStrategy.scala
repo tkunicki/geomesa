@@ -34,7 +34,7 @@ class Z3IdxStrategy(val filter: QueryFilter) extends Strategy with LazyLogging w
     import QueryHints.{LOOSE_BBOX, RichHints}
     import Z3IdxStrategy._
     import Z3Table.GEOM_Z_NUM_BYTES
-    import org.locationtech.geomesa.filter.FilterHelper._
+    import org.locationtech.geomesa.filter.FilterHelper.{logger => _, _}
 
     val ds  = queryPlanner.ds
     val sft = queryPlanner.sft

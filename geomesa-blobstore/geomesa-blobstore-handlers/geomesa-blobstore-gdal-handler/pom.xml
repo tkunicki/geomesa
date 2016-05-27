@@ -15,14 +15,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-blobstore-gdal-handler</artifactId>
+    <artifactId>geomesa-blobstore-gdal-handler${scala.suffix}</artifactId>
     <name>GeoMesa Blobstore GDAL File Handler</name>
 
     <dependencies>
 
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-blobstore-api</artifactId>
+            <artifactId>geomesa-blobstore-api${scala.suffix}</artifactId>
         </dependency>
 
         <dependency>
@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

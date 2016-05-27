@@ -398,7 +398,7 @@ object BinAggregatingIterator extends LazyLogging {
     is.addOption(GEOM_OPT, sft.indexOf(geom).toString)
     val dtgIndex = dtg.map(sft.indexOf).getOrElse(-1)
     is.addOption(DATE_OPT, dtgIndex.toString)
-    if (sft.isLines && dtgIndex != -1 && sft.getDescriptor(dtgIndex).getListType().contains(classOf[Date])) {
+    if (sft.isLines && dtgIndex != -1 && sft.getDescriptor(dtgIndex).getListType().exists(_ == classOf[Date])) {
       is.addOption(DATE_ARRAY_OPT, "true")
     }
     label.foreach(l => is.addOption(LABEL_OPT, sft.indexOf(l).toString))
@@ -411,7 +411,7 @@ object BinAggregatingIterator extends LazyLogging {
    * Determines if the requested fields match the precomputed bin data
    */
   def canUsePrecomputedBins(sft: SimpleFeatureType, hints: Hints): Boolean = {
-    sft.getBinTrackId.contains(hints.getBinTrackIdField) &&
+    sft.getBinTrackId.exists(_ == hints.getBinTrackIdField) &&
         hints.getBinGeomField.forall(_ == sft.getGeomField) &&
         hints.getBinDtgField == sft.getDtgField &&
         hints.getBinLabelField.isEmpty &&

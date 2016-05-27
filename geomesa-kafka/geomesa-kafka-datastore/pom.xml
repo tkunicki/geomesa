@@ -14,7 +14,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-kafka-datastore</artifactId>
+    <artifactId>geomesa-kafka-datastore${scala.suffix}</artifactId>
     <name>GeoMesa Kafka Data Store</name>
 
     <properties>
@@ -25,7 +25,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.11</artifactId>
+                <artifactId>kafka_${scala.binary.version}</artifactId>
                 <version>${kafka.08.version}</version>
                 <scope>provided</scope>
                 <exclusions>
@@ -45,11 +45,11 @@
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-utils-common</artifactId>
+            <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-08-utils</artifactId>
+            <artifactId>geomesa-kafka-08-utils${scala.suffix}</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -71,15 +71,15 @@
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-kryo</artifactId>
+            <artifactId>geomesa-feature-kryo${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-filter</artifactId>
+            <artifactId>geomesa-filter${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-security</artifactId>
+            <artifactId>geomesa-security${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -98,7 +98,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
+            <artifactId>kafka_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
@@ -106,11 +106,11 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
+            <artifactId>kafka_${scala.binary.version}</artifactId>
             <version>${kafka.08.version}</version>
             <classifier>test</classifier>
             <scope>test</scope>
@@ -137,14 +137,14 @@
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-08-utils</artifactId>
+            <artifactId>geomesa-kafka-08-utils${scala.suffix}</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-utils-common</artifactId>
+            <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

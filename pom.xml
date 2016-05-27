@@ -18,32 +18,6 @@
     <packaging>pom</packaging>
     <version>1.2.6</version>
 
-    <modules>
-        <module>geomesa-utils</module>
-        <module>geomesa-security</module>
-        <module>geomesa-features</module>
-        <module>geomesa-filter</module>
-        <module>geomesa-gs-plugin</module>
-        <module>geomesa-jobs</module>
-        <module>geomesa-kafka</module>
-        <module>geomesa-convert</module>
-        <module>geomesa-tools</module>
-        <module>geomesa-compute</module>
-        <module>geomesa-dist</module>
-        <module>geomesa-raster</module>
-        <module>geomesa-web</module>
-        <module>geomesa-process</module>
-        <module>geomesa-stream</module>
-        <module>geomesa-z3</module>
-        <module>geomesa-accumulo</module>
-        <module>geomesa-hbase</module>
-        <module>geomesa-blobstore</module>
-        <module>geomesa-cassandra</module>
-        <module>geomesa-metrics</module>
-        <module>docs</module>
-        <module>geomesa-native-api</module>
-    </modules>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -51,9 +25,11 @@
         <geomesa.release.version>1.2.6</geomesa.release.version>
         <geomesa.devel.version>1.2.6-SNAPSHOT</geomesa.devel.version>
 
-        <scala.version>2.11.7</scala.version>
+        <scala.suffix></scala.suffix>
+
         <scala.xml.version>1.0.5</scala.xml.version>
         <scala.parsers.version>1.0.4</scala.parsers.version>
+
         <geoserver.version>2.8.1</geoserver.version>
         <gt.version>14.1</gt.version>
         <jaiext.version>1.0.8</jaiext.version>
@@ -103,6 +79,109 @@
     </properties>
 
     <profiles>
+
+        <profile>
+            <id>default</id>
+            <activation>
+                <property><name>!spark</name></property>
+            </activation>
+            <modules>
+                <module>geomesa-utils</module>
+                <module>geomesa-security</module>
+                <module>geomesa-features</module>
+                <module>geomesa-filter</module>
+                <module>geomesa-gs-plugin</module>
+                <module>geomesa-jobs</module>
+                <module>geomesa-kafka</module>
+                <module>geomesa-convert</module>
+                <module>geomesa-tools</module>
+                <module>geomesa-compute</module>
+                <module>geomesa-dist</module>
+                <module>geomesa-raster</module>
+                <module>geomesa-web</module>
+                <module>geomesa-process</module>
+                <module>geomesa-stream</module>
+                <module>geomesa-z3</module>
+                <module>geomesa-accumulo</module>
+                <module>geomesa-hbase</module>
+                <module>geomesa-blobstore</module>
+                <module>geomesa-cassandra</module>
+                <module>geomesa-metrics</module>
+                <module>docs</module>
+                <module>geomesa-native-api</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>scala-2.11</id>
+            <activation>
+                <property><name>!scala-2.10</name></property>
+            </activation>
+            <properties>
+                <scala.version>2.11.7</scala.version>
+                <scala.binary.version>2.11</scala.binary.version>
+                <scala.suffix></scala.suffix>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.typesafe.scala-logging</groupId>
+                        <artifactId>scala-logging_${scala.binary.version}</artifactId>
+                        <version>${scalalogging.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.scala-lang.modules</groupId>
+                        <artifactId>scala-parser-combinators_${scala.binary.version}</artifactId>
+                        <version>${scala.parsers.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.scala-lang.modules</groupId>
+                        <artifactId>scala-xml_${scala.binary.version}</artifactId>
+                        <version>${scala.parsers.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>scala-2.10</id>
+            <activation>
+                <property><name>scala-2.10</name></property>
+            </activation>
+            <properties>
+                <scala.version>2.10.6</scala.version>
+                <scala.binary.version>2.10</scala.binary.version>
+                <scala.suffix>_${scala.binary.version}</scala.suffix>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.typesafe.scala-logging</groupId>
+                        <artifactId>scala-logging-slf4j_${scala.binary.version}</artifactId>
+                        <version>2.1.2</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>spark</id>
+            <activation>
+                <property><name>spark</name></property>
+            </activation>
+            <modules>
+                <module>geomesa-accumulo/geomesa-accumulo-datastore</module>
+                <module>geomesa-compute</module>
+                <module>geomesa-convert</module>
+                <module>geomesa-filter</module>
+                <module>geomesa-features</module>
+                <module>geomesa-jobs</module>
+                <module>geomesa-security</module>
+                <module>geomesa-utils</module>
+                <module>geomesa-z3</module>
+            </modules>
+        </profile>
+
         <profile>
             <id>Accumulo 1.5</id>
             <activation>
@@ -281,16 +360,6 @@
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scalap</artifactId>
                 <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang.modules</groupId>
-                <artifactId>scala-parser-combinators_2.11</artifactId>
-                <version>${scala.parsers.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang.modules</groupId>
-                <artifactId>scala-xml_2.11</artifactId>
-                <version>${scala.xml.version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -1353,145 +1422,165 @@
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-accumulo-datastore</artifactId>
+                <artifactId>geomesa-accumulo-datastore${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-utils</artifactId>
+                <artifactId>geomesa-utils${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-filter</artifactId>
+                <artifactId>geomesa-filter${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-accumulo-distributed-runtime</artifactId>
+                <artifactId>geomesa-accumulo-distributed-runtime${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-feature-all</artifactId>
+                <artifactId>geomesa-feature-all${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-feature-kryo</artifactId>
+                <artifactId>geomesa-feature-common${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-raster</artifactId>
+                <artifactId>geomesa-feature-kryo${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-tools</artifactId>
+                <artifactId>geomesa-feature-avro${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-jobs</artifactId>
+                <artifactId>geomesa-feature-nio${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-compute</artifactId>
+                <artifactId>geomesa-raster${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-compute</artifactId>
+                <artifactId>geomesa-tools${scala.suffix}</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.locationtech.geomesa</groupId>
+                <artifactId>geomesa-jobs${scala.suffix}</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.locationtech.geomesa</groupId>
+                <artifactId>geomesa-compute${scala.suffix}</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.locationtech.geomesa</groupId>
+                <artifactId>geomesa-compute${scala.suffix}</artifactId>
                 <classifier>shaded</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-dist</artifactId>
+                <artifactId>geomesa-dist${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-all</artifactId>
+                <artifactId>geomesa-convert-all${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-common</artifactId>
+                <artifactId>geomesa-convert-common${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-avro</artifactId>
+                <artifactId>geomesa-convert-avro${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-fixedwidth</artifactId>
+                <artifactId>geomesa-convert-fixedwidth${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-json</artifactId>
+                <artifactId>geomesa-convert-json${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-text</artifactId>
+                <artifactId>geomesa-convert-text${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-xml</artifactId>
+                <artifactId>geomesa-convert-scripting${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-metrics</artifactId>
+                <artifactId>geomesa-convert-xml${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-kafka-datastore</artifactId>
+                <artifactId>geomesa-metrics${scala.suffix}</artifactId>
                 <version>${project.version}</version>
-                <exclusions>
-                    <!-- These are included in the datastore jar -->
-                    <exclusion>
-                        <groupId>org.locationtech.geomesa</groupId>
-                        <artifactId>geomesa-kafka-08-utils</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.locationtech.geomesa</groupId>
-                        <artifactId>geomesa-kafka-utils-common</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-kafka-09-datastore</artifactId>
+                <artifactId>geomesa-kafka-datastore${scala.suffix}</artifactId>
                 <version>${project.version}</version>
                 <exclusions>
                     <!-- These are included in the datastore jar -->
                     <exclusion>
                         <groupId>org.locationtech.geomesa</groupId>
-                        <artifactId>geomesa-kafka-09-utils</artifactId>
+                        <artifactId>geomesa-kafka-08-utils${scala.suffix}</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.locationtech.geomesa</groupId>
-                        <artifactId>geomesa-kafka-utils-common</artifactId>
+                        <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-blobstore-api</artifactId>
+                <artifactId>geomesa-kafka-09-datastore${scala.suffix}</artifactId>
+                <version>${project.version}</version>
+                <exclusions>
+                    <!-- These are included in the datastore jar -->
+                    <exclusion>
+                        <groupId>org.locationtech.geomesa</groupId>
+                        <artifactId>geomesa-kafka-09-utils${scala.suffix}</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.locationtech.geomesa</groupId>
+                        <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.locationtech.geomesa</groupId>
+                <artifactId>geomesa-blobstore-api${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.11</artifactId>
+                <artifactId>kafka_${scala.binary.version}</artifactId>
                 <version>${kafka.version}</version>
                 <exclusions>
                     <exclusion>
@@ -1530,7 +1619,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-core_2.11</artifactId>
+                <artifactId>spark-core_${scala.binary.version}</artifactId>
                 <version>${spark.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -1606,11 +1695,6 @@
                 <version>2.3.0</version>
             </dependency>
             <dependency>
-                <groupId>com.typesafe.scala-logging</groupId>
-                <artifactId>scala-logging_2.11</artifactId>
-                <version>${scalalogging.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
@@ -1653,7 +1737,7 @@
             </dependency>
             <dependency>
                 <groupId>com.twitter</groupId>
-                <artifactId>chill_2.11</artifactId>
+                <artifactId>chill_${scala.binary.version}</artifactId>
                 <version>0.5.2</version>
             </dependency>
 
@@ -1810,8 +1894,8 @@
             </dependency>
             <dependency>
                 <groupId>org.specs2</groupId>
-                <artifactId>specs2_2.11</artifactId>
-                <version>2.3.13</version>
+                <artifactId>specs2_${scala.binary.version}</artifactId>
+                <version>${specs2.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1833,52 +1917,52 @@
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-process</artifactId>
+                <artifactId>geomesa-process${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-web</artifactId>
+                <artifactId>geomesa-web${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-web-csv</artifactId>
+                <artifactId>geomesa-web-csv${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-web-data</artifactId>
+                <artifactId>geomesa-web-data${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-web-core</artifactId>
+                <artifactId>geomesa-web-core${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-security</artifactId>
+                <artifactId>geomesa-security${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-web-security</artifactId>
+                <artifactId>geomesa-web-security${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-web-install</artifactId>
+                <artifactId>geomesa-web-install${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-z3</artifactId>
+                <artifactId>geomesa-z3${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-convert-scripting</artifactId>
+                <artifactId>geomesa-convert-scripting${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -1953,6 +2037,19 @@
                         <target>1.7</target>
                         <scalaVersion>${scala.version}</scalaVersion>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>add-source</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDir>src/main/scala_${scala.binary.version}</sourceDir>
+                                <testSourceDir>src/test/scala_${scala.binary.version}</testSourceDir>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -15,13 +15,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-convert-text</artifactId>
+    <artifactId>geomesa-convert-text${scala.suffix}</artifactId>
     <name>GeoMesa Convert Text</name>
 
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-convert-common</artifactId>
+            <artifactId>geomesa-convert-common${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

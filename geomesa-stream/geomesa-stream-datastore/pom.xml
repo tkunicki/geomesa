@@ -7,13 +7,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-stream-datastore</artifactId>
+    <artifactId>geomesa-stream-datastore${scala.suffix}</artifactId>
     <name>GeoMesa Stream DataStore</name>
 
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-stream-generic</artifactId>
+            <artifactId>geomesa-stream-generic${scala.suffix}</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -26,7 +26,7 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-convert-text</artifactId>
+            <artifactId>geomesa-convert-text${scala.suffix}</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
