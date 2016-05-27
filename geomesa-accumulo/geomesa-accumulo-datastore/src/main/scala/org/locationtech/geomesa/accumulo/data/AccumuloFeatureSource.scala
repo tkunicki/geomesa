@@ -156,7 +156,7 @@ class AccumuloFeatureCollection(source: AccumuloFeatureSource, query: Query)
     }
 
   private def isTime(e: Expression) = e match {
-    case p: PropertyName => getSchema.getDtgField.contains(p.getPropertyName)
+    case p: PropertyName => getSchema.getDtgField.exists(_ == p.getPropertyName)
     case _ => false
   }
 

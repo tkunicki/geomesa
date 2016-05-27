@@ -7,13 +7,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-convert-json</artifactId>
+    <artifactId>geomesa-convert-json${scala.suffix}</artifactId>
     <name>GeoMesa Convert Json</name>
 
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-convert-common</artifactId>
+            <artifactId>geomesa-convert-common${scala.suffix}</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -32,7 +32,7 @@
 
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

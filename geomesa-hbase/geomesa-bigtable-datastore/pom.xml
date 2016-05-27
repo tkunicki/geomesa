@@ -17,7 +17,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-bigtable-datastore</artifactId>
+    <artifactId>geomesa-bigtable-datastore${scala.suffix}</artifactId>
     <name>GeoMesa Bigtable DataStore</name>
 
     <properties>
@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-hbase-datastore</artifactId>
+            <artifactId>geomesa-hbase-datastore${scala.suffix}</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

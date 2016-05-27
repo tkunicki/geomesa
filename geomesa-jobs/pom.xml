@@ -15,7 +15,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-jobs</artifactId>
+    <artifactId>geomesa-jobs${scala.suffix}</artifactId>
     <name>GeoMesa Jobs</name>
 
     <properties>
@@ -25,19 +25,19 @@
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-accumulo-datastore</artifactId>
+            <artifactId>geomesa-accumulo-datastore${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-all</artifactId>
+            <artifactId>geomesa-feature-all${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-convert-all</artifactId>
+            <artifactId>geomesa-convert-all${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-security</artifactId>
+            <artifactId>geomesa-security${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.accumulo</groupId>
@@ -54,10 +54,6 @@
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -80,11 +76,35 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
         </dependency>
     </dependencies>
 
     <profiles>
+        <profile>
+            <id>scala-2.11</id>
+            <activation>
+                <property><name>!scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging_${scala.binary.version}</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>scala-2.10</id>
+            <activation>
+                <property><name>scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging-slf4j_${scala.binary.version}</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <id>assemble</id>
             <dependencies>

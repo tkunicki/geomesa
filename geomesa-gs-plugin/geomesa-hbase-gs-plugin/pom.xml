@@ -15,7 +15,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-hbase-gs-plugin</artifactId>
+    <artifactId>geomesa-hbase-gs-plugin${scala.suffix}</artifactId>
     <name>GeoMesa HBase GeoServer Plugin</name>
 
     <!-- Because geoserver includes guava 17, and hbase requires guava 12, we have to create a shaded jar
@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-hbase-datastore</artifactId>
+            <artifactId>geomesa-hbase-datastore${scala.suffix}</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>

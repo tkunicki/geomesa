@@ -189,7 +189,7 @@
             </dependency>
             <dependency>
                 <groupId>org.scalatra</groupId>
-                <artifactId>scalatra_2.11</artifactId>
+                <artifactId>scalatra_${scala.binary.version}</artifactId>
                 <version>${scalatra.version}</version>
             </dependency>
             <dependency>
@@ -200,7 +200,7 @@
             </dependency>
             <dependency>
                 <groupId>org.scalatra</groupId>
-                <artifactId>scalatra-auth_2.11</artifactId>
+                <artifactId>scalatra-auth_${scala.binary.version}</artifactId>
                 <version>${scalatra.version}</version>
             </dependency>
             <dependency>

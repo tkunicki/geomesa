@@ -195,7 +195,7 @@ class QueryFilterSplitter(sft: SimpleFeatureType) extends MethodProfiling with L
         // TODO this won't take into account indexed dates... but our getSameAttributeOption doesn't either
         val attributes = ors.flatMap(getAttributeProperty).map(_.name)
         attributes.length == ors.length && attributes.forall(_ == attributes.head) &&
-            attributes.head != sft.getGeomField && !sft.getDtgField.contains(attributes.head)
+            attributes.head != sft.getGeomField && !sft.getDtgField.exists(_ == attributes.head)
       }
       singleAttributeOr.map { ors =>
         // we can create one plan for the single attribute filter, then AND the other filters to that,

@@ -7,25 +7,25 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-hbase-datastore</artifactId>
+    <artifactId>geomesa-hbase-datastore${scala.suffix}</artifactId>
     <name>GeoMesa HBase DataStore</name>
 
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-z3</artifactId>
+            <artifactId>geomesa-z3${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-utils</artifactId>
+            <artifactId>geomesa-utils${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-filter</artifactId>
+            <artifactId>geomesa-filter${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-kryo</artifactId>
+            <artifactId>geomesa-feature-kryo${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
         </dependency>
     </dependencies>
 

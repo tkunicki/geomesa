@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
-    <artifactId>geomesa-dist</artifactId>
+    <artifactId>geomesa-dist${scala.suffix}</artifactId>
     <name>GeoMesa Distribution</name>
 
     <properties>
@@ -27,7 +27,7 @@
         <!-- Tools -->
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-tools</artifactId>
+            <artifactId>geomesa-tools${scala.suffix}</artifactId>
             <classifier>bin</classifier>
             <version>${project.version}</version>
             <type>tar.gz</type>
@@ -36,47 +36,47 @@
         <!-- Accumulo -->
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-accumulo-distributed-runtime</artifactId>
+            <artifactId>geomesa-accumulo-distributed-runtime${scala.suffix}</artifactId>
         </dependency>
 
         <!-- Spark -->
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-compute</artifactId>
+            <artifactId>geomesa-compute${scala.suffix}</artifactId>
             <classifier>shaded</classifier>
         </dependency>
 
         <!-- Yarn -->
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-jobs</artifactId>
+            <artifactId>geomesa-jobs${scala.suffix}</artifactId>
         </dependency>
 
         <!-- GeoServer Plugins -->
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-accumulo-gs-plugin</artifactId>
+            <artifactId>geomesa-accumulo-gs-plugin${scala.suffix}</artifactId>
             <classifier>install</classifier>
             <version>${project.version}</version>
             <type>tar.gz</type>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-blobstore-gs-plugin</artifactId>
+            <artifactId>geomesa-blobstore-gs-plugin${scala.suffix}</artifactId>
             <classifier>install</classifier>
             <version>${project.version}</version>
             <type>tar.gz</type>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-gs-plugin</artifactId>
+            <artifactId>geomesa-kafka-gs-plugin${scala.suffix}</artifactId>
             <classifier>install</classifier>
             <version>${project.version}</version>
             <type>tar.gz</type>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-stream-gs-plugin</artifactId>
+            <artifactId>geomesa-stream-gs-plugin${scala.suffix}</artifactId>
             <classifier>install</classifier>
             <version>${project.version}</version>
             <type>tar.gz</type>
@@ -85,11 +85,11 @@
         <!-- Web Services -->
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-web-core</artifactId>
+            <artifactId>geomesa-web-core${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-web-data</artifactId>
+            <artifactId>geomesa-web-data${scala.suffix}</artifactId>
             <classifier>install</classifier>
             <version>${project.version}</version>
             <type>tar.gz</type>
@@ -102,7 +102,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.locationtech.geomesa</groupId>
-                    <artifactId>geomesa-bigtable-gs-plugin</artifactId>
+                    <artifactId>geomesa-bigtable-gs-plugin${scala.suffix}</artifactId>
                     <classifier>install</classifier>
                     <version>${project.version}</version>
                     <type>tar.gz</type>

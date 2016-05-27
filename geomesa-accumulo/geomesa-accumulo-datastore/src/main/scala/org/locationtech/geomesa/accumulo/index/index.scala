@@ -8,7 +8,6 @@
 
 package org.locationtech.geomesa.accumulo
 
-import com.typesafe.scalalogging.Logger
 import com.vividsolutions.jts.geom.Envelope
 import org.apache.accumulo.core.data.{Key, Range => AccRange, Value}
 import org.geotools.factory.Hints
@@ -17,6 +16,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope
 import org.joda.time.{DateTime, DateTimeZone}
 import org.locationtech.geomesa.accumulo.data._
 import org.locationtech.geomesa.accumulo.index.Strategy.StrategyType._
+import org.locationtech.geomesa.util.logging.Logger
 import org.opengis.feature.simple.SimpleFeatureType
 import org.slf4j.LoggerFactory
 

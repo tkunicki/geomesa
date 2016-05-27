@@ -14,7 +14,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-kafka-09-utils</artifactId>
+    <artifactId>geomesa-kafka-09-utils${scala.suffix}</artifactId>
     <name>GeoMesa Kafka 09 Utils</name>
 
     <properties>
@@ -25,7 +25,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.11</artifactId>
+                <artifactId>kafka_${scala.binary.version}</artifactId>
                 <version>${kafka.09.version}</version>
                 <scope>provided</scope>
                 <exclusions>
@@ -45,15 +45,15 @@
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-utils-common</artifactId>
+            <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
+            <artifactId>kafka_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
+            <artifactId>kafka_${scala.binary.version}</artifactId>
             <version>${kafka.09.version}</version>
             <classifier>test</classifier>
             <scope>test</scope>
@@ -74,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-utils-common</artifactId>
+            <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

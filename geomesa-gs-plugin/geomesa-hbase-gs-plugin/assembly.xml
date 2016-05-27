@@ -18,7 +18,7 @@
             <useProjectArtifact>true</useProjectArtifact>
             <scope>runtime</scope>
             <includes>
-                <include>org.locationtech.geomesa:geomesa-hbase-gs-plugin</include>
+                <include>org.locationtech.geomesa:geomesa-hbase-gs-plugin${scala.suffix}</include>
             </includes>
         </dependencySet>
     </dependencySets>
