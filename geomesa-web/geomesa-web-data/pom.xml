@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-web-data</artifactId>
+    <artifactId>geomesa-web-data${scala.suffix}</artifactId>
     <name>GeoMesa Web Data</name>
     <description>Provides direct REST access to GeoMesa data</description>
 
@@ -83,73 +83,97 @@
     <dependencies>
         <dependency>
             <groupId>org.scalatra</groupId>
-            <artifactId>scalatra_2.11</artifactId>
+            <artifactId>scalatra_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.scalatra</groupId>
-            <artifactId>scalatra-json_2.11</artifactId>
+            <artifactId>scalatra-json_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-native_2.11</artifactId>
+            <artifactId>json4s-native_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-compute</artifactId>
+            <artifactId>geomesa-compute${scala.suffix}</artifactId>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.locationtech.geomesa</groupId>
-                    <artifactId>geomesa-accumulo-datastore</artifactId>
+                    <artifactId>geomesa-accumulo-datastore${scala.suffix}</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.locationtech.geomesa</groupId>
-                    <artifactId>geomesa-jobs</artifactId>
+                    <artifactId>geomesa-jobs${scala.suffix}</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-all</artifactId>
+            <artifactId>geomesa-feature-all${scala.suffix}</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
+            <artifactId>spark-core_${scala.binary.version}</artifactId>
             <version>${spark.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-yarn_2.11</artifactId>
+            <artifactId>spark-yarn_${scala.binary.version}</artifactId>
             <version>${spark.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
+            <artifactId>spark-sql_${scala.binary.version}</artifactId>
             <version>${spark.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-catalyst_2.11</artifactId>
+            <artifactId>spark-catalyst_${scala.binary.version}</artifactId>
             <version>${spark.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-web-core</artifactId>
+            <artifactId>geomesa-web-core${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-accumulo-datastore</artifactId>
+            <artifactId>geomesa-accumulo-datastore${scala.suffix}</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>scala-2.11</id>
+            <activation>
+                <property><name>!scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging_${scala.binary.version}</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>scala-2.10</id>
+            <activation>
+                <property><name>scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging-slf4j_${scala.binary.version}</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
 
     <build>
         <plugins>

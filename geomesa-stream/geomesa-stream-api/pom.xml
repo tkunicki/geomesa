@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-stream-api</artifactId>
+    <artifactId>geomesa-stream-api${scala.suffix}</artifactId>
     <name>GeoMesa Stream API</name>
 
     <dependencies>

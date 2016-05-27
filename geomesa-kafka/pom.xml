@@ -26,7 +26,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-kafka-utils-common</artifactId>
+                <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -41,7 +41,7 @@
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-kafka-utils-common</artifactId>
+                <artifactId>geomesa-kafka-utils-common${scala.suffix}</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>

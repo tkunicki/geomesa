@@ -7,23 +7,23 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-stream-generic</artifactId>
+    <artifactId>geomesa-stream-generic${scala.suffix}</artifactId>
     <name>GeoMesa Stream Generic</name>
 
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-stream-api</artifactId>
+            <artifactId>geomesa-stream-api${scala.suffix}</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-convert-common</artifactId>
+            <artifactId>geomesa-convert-common${scala.suffix}</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-all</artifactId>
+            <artifactId>geomesa-feature-all${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -71,7 +71,7 @@
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-convert-text</artifactId>
+            <artifactId>geomesa-convert-text${scala.suffix}</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
