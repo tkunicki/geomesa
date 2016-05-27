@@ -15,18 +15,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-blobstore-exif-handler</artifactId>
+    <artifactId>geomesa-blobstore-exif-handler${scala.suffix}</artifactId>
     <name>GeoMesa Blobstore EXIF Metadata Handler</name>
 
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-accumulo-datastore</artifactId>
+            <artifactId>geomesa-accumulo-datastore${scala.suffix}</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-blobstore-core</artifactId>
+            <artifactId>geomesa-blobstore-core${scala.suffix}</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
