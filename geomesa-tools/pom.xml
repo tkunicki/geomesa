@@ -16,7 +16,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-tools</artifactId>
+    <artifactId>geomesa-tools${scala.suffix}</artifactId>
     <name>GeoMesa Tools</name>
 
     <properties>
@@ -26,35 +26,35 @@
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-accumulo-datastore</artifactId>
+            <artifactId>geomesa-accumulo-datastore${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-security</artifactId>
+            <artifactId>geomesa-security${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-z3</artifactId>
+            <artifactId>geomesa-z3${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-jobs</artifactId>
+            <artifactId>geomesa-jobs${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-utils</artifactId>
+            <artifactId>geomesa-utils${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-filter</artifactId>
+            <artifactId>geomesa-filter${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-raster</artifactId>
+            <artifactId>geomesa-raster${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-convert-all</artifactId>
+            <artifactId>geomesa-convert-all${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -69,17 +69,17 @@
         <!-- Kafka CLI dependencies -->
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-datastore</artifactId>
+            <artifactId>geomesa-kafka-datastore${scala.suffix}</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.locationtech.geomesa</groupId>
-                    <artifactId>geomesa-feature-kryo</artifactId>
+                    <artifactId>geomesa-feature-kryo${scala.suffix}</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
+            <artifactId>kafka_${scala.binary.version}</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -94,12 +94,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-
-        <!-- needed in the lib dir -->
-        <dependency>
-            <groupId>org.scala-lang.modules</groupId>
-            <artifactId>scala-xml_2.11</artifactId>
         </dependency>
 
         <!-- provided dependencies -->
@@ -122,10 +116,6 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -163,7 +153,7 @@
         <!-- test deps -->
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -171,6 +161,38 @@
             <artifactId>accumulo-test</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>scala-2.11</id>
+            <activation>
+                <property><name>!scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <!-- needed in the lib dir -->
+                    <groupId>org.scala-lang.modules</groupId>
+                    <artifactId>scala-xml_${scala.binary.version}</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging_${scala.binary.version}</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>scala-2.10</id>
+            <activation>
+                <property><name>scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging-slf4j_${scala.binary.version}</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <build>
         <resources>

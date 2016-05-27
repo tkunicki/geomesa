@@ -15,7 +15,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-filter</artifactId>
+    <artifactId>geomesa-filter${scala.suffix}</artifactId>
     <name>GeoMesa Filters and Functions</name>
 
     <properties>
@@ -49,17 +49,17 @@
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-utils</artifactId>
+            <artifactId>geomesa-utils${scala.suffix}</artifactId>
         </dependency>
         <!-- test deps -->
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-all</artifactId>
+            <artifactId>geomesa-feature-all${scala.suffix}</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

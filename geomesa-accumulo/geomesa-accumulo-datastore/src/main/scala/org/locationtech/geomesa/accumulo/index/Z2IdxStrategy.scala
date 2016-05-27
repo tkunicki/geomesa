@@ -36,7 +36,7 @@ class Z2IdxStrategy(val filter: QueryFilter) extends Strategy with LazyLogging w
 
     import QueryHints.{LOOSE_BBOX, RichHints}
     import Z2IdxStrategy._
-    import org.locationtech.geomesa.filter.FilterHelper._
+    import org.locationtech.geomesa.filter.FilterHelper.{logger => _, _}
     import org.locationtech.geomesa.filter._
     import org.locationtech.geomesa.utils.geotools.RichSimpleFeatureType._
 

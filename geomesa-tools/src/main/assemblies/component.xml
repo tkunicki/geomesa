@@ -16,8 +16,8 @@
                 <exclude>org.locationtech.geomesa:geomesa-compute*</exclude>
                 <exclude>com.google.guava:guava</exclude> <!-- Guava conflicts with Hadoop 2.x which provides guava 11.0.2-->
                 <exclude>org.apache.zookeeper:zookeeper</exclude>
-                <exclude>org.apache.kafka:kafka_2.11</exclude>
-                <exclude>org.locationtech.geomesa:geomesa-kafka-datastore</exclude>
+                <exclude>org.apache.kafka:kafka_${scala.binary.version}</exclude>
+                <exclude>org.locationtech.geomesa:geomesa-kafka-datastore${scala.suffix}</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -29,8 +29,8 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
                 <include>com.google.guava:guava</include>
-                <include>org.apache.kafka:kafka_2.11</include>
-                <include>org.locationtech.geomesa:geomesa-kafka-datastore</include>
+                <include>org.apache.kafka:kafka_${scala.binary.version}</include>
+                <include>org.locationtech.geomesa:geomesa-kafka-datastore${scala.suffix}</include>
                 <include>org.apache.zookeeper:zookeeper</include>
             </includes>
         </dependencySet>

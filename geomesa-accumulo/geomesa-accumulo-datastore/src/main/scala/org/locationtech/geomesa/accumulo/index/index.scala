@@ -8,7 +8,6 @@
 
 package org.locationtech.geomesa.accumulo
 
-import com.typesafe.scalalogging.Logger
 import com.vividsolutions.jts.geom.Envelope
 import org.apache.accumulo.core.data.{Key, Value, Range => AccRange}
 import org.geotools.factory.Hints
@@ -19,6 +18,7 @@ import org.locationtech.geomesa.accumulo.data._
 import org.locationtech.geomesa.accumulo.index.Strategy.CostEvaluation
 import org.locationtech.geomesa.accumulo.index.Strategy.CostEvaluation.CostEvaluation
 import org.locationtech.geomesa.accumulo.index.Strategy.StrategyType._
+import org.locationtech.geomesa.util.logging.Logger
 import org.opengis.feature.simple.SimpleFeatureType
 import org.slf4j.LoggerFactory
 

@@ -15,7 +15,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-z3</artifactId>
+    <artifactId>geomesa-z3${scala.suffix}</artifactId>
     <name>GeoMesa Index Z3</name>
 
     <dependencies>
@@ -25,19 +25,43 @@
         </dependency>
         <dependency>
             <groupId>org.locationtech.sfcurve</groupId>
-            <artifactId>sfcurve-zorder_2.11</artifactId>
+            <artifactId>sfcurve-zorder_${scala.binary.version}</artifactId>
             <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>scala-2.11</id>
+            <activation>
+                <property><name>!scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging_${scala.binary.version}</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>scala-2.10</id>
+            <activation>
+                <property><name>scala-2.10</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.typesafe.scala-logging</groupId>
+                    <artifactId>scala-logging-slf4j_${scala.binary.version}</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>

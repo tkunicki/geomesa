@@ -197,27 +197,27 @@
             </dependency>
             <dependency>
                 <groupId>org.scalatra</groupId>
-                <artifactId>scalatra-swagger_2.11</artifactId>
+                <artifactId>scalatra-swagger_${scala.binary.version}</artifactId>
                 <version>${scalatra.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.scalatra</groupId>
-                <artifactId>scalatra_2.11</artifactId>
+                <artifactId>scalatra_${scala.binary.version}</artifactId>
                 <version>${scalatra.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.scalatra</groupId>
-                <artifactId>scalatra-auth_2.11</artifactId>
+                <artifactId>scalatra-auth_${scala.binary.version}</artifactId>
                 <version>${scalatra.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.scalatra</groupId>
-                <artifactId>scalatra-json_2.11</artifactId>
+                <artifactId>scalatra-json_${scala.binary.version}</artifactId>
                 <version>${scalatra.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.json4s</groupId>
-                <artifactId>json4s-native_2.11</artifactId>
+                <artifactId>json4s-native_${scala.binary.version}</artifactId>
                 <version>${json4s.version}</version>
             </dependency>
             <dependency>

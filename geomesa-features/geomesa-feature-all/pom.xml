@@ -7,33 +7,29 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>geomesa-feature-all</artifactId>
+    <artifactId>geomesa-feature-all${scala.suffix}</artifactId>
     <name>GeoMesa Features All</name>
 
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-common</artifactId>
-            <version>${project.version}</version>
+            <artifactId>geomesa-feature-common${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-kryo</artifactId>
-            <version>${project.version}</version>
+            <artifactId>geomesa-feature-kryo${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-avro</artifactId>
-            <version>${project.version}</version>
+            <artifactId>geomesa-feature-avro${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-feature-nio</artifactId>
-            <version>${project.version}</version>
+            <artifactId>geomesa-feature-nio${scala.suffix}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-security</artifactId>
+            <artifactId>geomesa-security${scala.suffix}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -43,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
+            <artifactId>specs2_${scala.binary.version}</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
