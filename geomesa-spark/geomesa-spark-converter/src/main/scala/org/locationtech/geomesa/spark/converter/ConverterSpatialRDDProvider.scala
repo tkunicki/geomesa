@@ -29,6 +29,7 @@ import org.locationtech.geomesa.utils.io.CloseQuietly
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.opengis.filter.Filter
 
+import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 
 /**
@@ -45,15 +46,16 @@ import scala.util.control.NonFatal
 class ConverterSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
 
   import ConverterSpatialRDDProvider.{ConverterKey, IngestTypeKey, FeatureNameKey, InputFilesKey, SftKey}
+  import org.locationtech.geomesa.spark.TypeDefault._
 
   override def canProcess(params: util.Map[String, Serializable]): Boolean =
     ((params.containsKey(ConverterKey) && params.containsKey(SftKey))
       || params.containsKey(IngestTypeKey)) && params.containsKey(InputFilesKey)
 
-  override def rdd(conf: Configuration,
-                   sc: SparkContext,
-                   params: Map[String, String],
-                   query: Query): RDD[SimpleFeature] = {
+  override def rdd[T : ClassTag](conf: Configuration,
+                                 sc: SparkContext,
+                                 params: Map[String, String],
+                                 query: Query)(implicit default: T := SimpleFeature): RDD[T] = {
     val (sft, converterConf) = computeSftConfig(params, query)
 
     ConverterInputFormat.setConverterConfig(conf, converterConf)
@@ -73,7 +75,7 @@ class ConverterSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
     }
 
     val rdd = sc.newAPIHadoopRDD(conf, classOf[ConverterInputFormat], classOf[LongWritable], classOf[SimpleFeature])
-    rdd.map(_._2)
+    rdd.map(_._2).asInstanceOf[RDD[T]]
   }
 
   // TODO:  Move the logic here and in the next function to utils (aka somewhere more general)

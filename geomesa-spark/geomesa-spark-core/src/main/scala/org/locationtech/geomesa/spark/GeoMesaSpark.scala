@@ -16,24 +16,27 @@ import org.apache.spark.rdd.RDD
 import org.geotools.data.Query
 import org.opengis.feature.simple.SimpleFeature
 
+import scala.reflect._
+
 trait SpatialRDDProvider {
+  import TypeDefault._
 
   def canProcess(params: java.util.Map[String, java.io.Serializable]): Boolean
 
-  def rdd(conf: Configuration,
-          sc: SparkContext,
-          dsParams: Map[String, String],
-          query: Query): RDD[SimpleFeature]
+  def rdd[T : ClassTag](conf: Configuration,
+             sc: SparkContext,
+             params: Map[String, String],
+             query: Query)(implicit default: T := SimpleFeature): RDD[T]
 
   /**
     * Writes this RDD to a GeoMesa table.
     * The type must exist in the data store, and all of the features in the RDD must be of this type.
     *
     * @param rdd
-    * @param writeDataStoreParams
-    * @param writeTypeName
+    * @param params
+    * @param typeName
     */
-  def save(rdd: RDD[SimpleFeature], writeDataStoreParams: Map[String, String], writeTypeName: String): Unit
+  def save(rdd: RDD[SimpleFeature], params: Map[String, String], typeName: String): Unit
 
 }
 
@@ -63,5 +66,18 @@ object CaseInsensitiveMapFix {
   implicit def mapAsJavaMap[A <: String, B](m: scala.collection.Map[A, B]): java.util.Map[A, B] = m match {
     case JMapWrapper(wrapped) => wrapped.asInstanceOf[java.util.Map[A, B]]
     case _ => new MapWrapper[A,B](m) with MapWrapperFix[A, B]
+  }
+}
+
+object TypeDefault {
+
+  class :=[P,D]
+
+  trait Default_:={
+    implicit def useProvided[Provided,Default] = new :=[Provided,Default]
+  }
+
+  object := extends Default_:={
+    implicit def useDefault[Default] = new :=[Default,Default]
   }
 }

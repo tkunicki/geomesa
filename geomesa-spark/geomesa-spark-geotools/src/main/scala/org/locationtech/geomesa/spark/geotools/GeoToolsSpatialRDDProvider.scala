@@ -23,24 +23,26 @@ import org.locationtech.geomesa.utils.io.CloseQuietly
 import org.opengis.feature.simple.SimpleFeature
 
 import scala.collection.JavaConversions._
+import scala.reflect.ClassTag
 
 class GeoToolsSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
   import org.locationtech.geomesa.spark.CaseInsensitiveMapFix._
+  import org.locationtech.geomesa.spark.TypeDefault._
 
   override def canProcess(params: util.Map[String, Serializable]): Boolean = {
     params.containsKey("geotools") &&
       DataStoreFinder.getAllDataStores.exists(_.canProcess(params))
   }
 
-  override def rdd(conf: Configuration,
-                   sc: SparkContext,
-                   dsParams: Map[String, String],
-                   query: Query): RDD[SimpleFeature] = {
-    val ds = DataStoreFinder.getDataStore(dsParams)
+  override def rdd[T : ClassTag](conf: Configuration,
+                                  sc: SparkContext,
+                                  params: Map[String, String],
+                                  query: Query)(implicit default: T := SimpleFeature): RDD[T] = {
+    val ds = DataStoreFinder.getDataStore(params)
     val fr = ds.getFeatureReader(query, Transaction.AUTO_COMMIT)
     val rdd = sc.parallelize(fr.toIterator.toSeq)
     ds.dispose()
-    rdd
+    rdd.asInstanceOf[RDD[T]]
   }
 
   /**
@@ -48,22 +50,22 @@ class GeoToolsSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
     * The type must exist in the data store, and all of the features in the RDD must be of this type.
     *
     * @param rdd
-    * @param writeDataStoreParams
-    * @param writeTypeName
+    * @param params
+    * @param typeName
     */
-  override def save(rdd: RDD[SimpleFeature], writeDataStoreParams: Map[String, String], writeTypeName: String): Unit = {
-    val ds = DataStoreFinder.getDataStore(writeDataStoreParams)
+  override def save(rdd: RDD[SimpleFeature], params: Map[String, String], typeName: String): Unit = {
+    val ds = DataStoreFinder.getDataStore(params)
 
     try {
-      require(ds.getSchema(writeTypeName) != null,
+      require(ds.getSchema(typeName) != null,
         "Feature type must exist before calling save.  Call createSchema on the DataStore first.")
     } finally {
       ds.dispose()
     }
 
     rdd.foreachPartition { iter =>
-      val ds = DataStoreFinder.getDataStore(writeDataStoreParams)
-      val featureWriter = ds.getFeatureWriterAppend(writeTypeName, Transaction.AUTO_COMMIT)
+      val ds = DataStoreFinder.getDataStore(params)
+      val featureWriter = ds.getFeatureWriterAppend(typeName, Transaction.AUTO_COMMIT)
       try {
         iter.foreach {
           FeatureUtils.copyToWriter(featureWriter, _)
