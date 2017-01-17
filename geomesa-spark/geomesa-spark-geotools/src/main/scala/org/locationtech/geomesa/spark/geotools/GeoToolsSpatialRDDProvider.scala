@@ -34,15 +34,15 @@ class GeoToolsSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
       DataStoreFinder.getAllDataStores.exists(_.canProcess(params))
   }
 
-  override def rdd[T : ClassTag](conf: Configuration,
-                                  sc: SparkContext,
-                                  params: Map[String, String],
-                                  query: Query)(implicit default: T := SimpleFeature): RDD[T] = {
+  override def read(conf: Configuration,
+                    sc: SparkContext,
+                    params: Map[String, String],
+                    query: Query): SpatialRDD = {
     val ds = DataStoreFinder.getDataStore(params)
     val fr = ds.getFeatureReader(query, Transaction.AUTO_COMMIT)
     val rdd = sc.parallelize(fr.toIterator.toSeq)
     ds.dispose()
-    rdd.asInstanceOf[RDD[T]]
+    SpatialRDD(rdd, fr.getFeatureType)
   }
 
   /**
