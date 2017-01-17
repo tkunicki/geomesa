@@ -44,20 +44,20 @@ class AccumuloSpatialRDDProvider extends SpatialRDDProvider {
   override def canProcess(params: java.util.Map[String, java.io.Serializable]): Boolean =
     AccumuloDataStoreFactory.canProcess(params)
 
-  def inputFormat[T : ClassTag](): Class[InputFormat[Text, T]] = {
-    (classTag[T] match {
-      case c if c == classTag[SimpleFeature] => classOf[GeoMesaAccumuloInputFormat]
-      case c if c == classTag[String] => classOf[GeoMesaAccumuloGeoJsonInputFormat]
-      case c if c == classTag[Array[Byte]] => classOf[GeoMesaAccumuloKryoInputFormat]
-      case c if c == classTag[Map[String, String]] => classOf[GeoMesaAccumuloMapInputFormat]
-      case _ => throw new IllegalArgumentException
-    }).asInstanceOf[Class[InputFormat[Text, T]]]
-  }
+//  def inputFormat[T : ClassTag](): Class[InputFormat[Text, T]] = {
+//    (classTag[T] match {
+//      case c if c == classTag[SimpleFeature] => classOf[GeoMesaAccumuloInputFormat]
+//      case c if c == classTag[String] => classOf[GeoMesaAccumuloGeoJsonInputFormat]
+//      case c if c == classTag[Array[Byte]] => classOf[GeoMesaAccumuloKryoInputFormat]
+//      case c if c == classTag[Map[String, String]] => classOf[GeoMesaAccumuloMapInputFormat]
+//      case _ => throw new IllegalArgumentException
+//    }).asInstanceOf[Class[InputFormat[Text, T]]]
+//  }
 
-  def rdd[T : ClassTag](conf: Configuration,
-                        sc: SparkContext,
-                        params: Map[String, String],
-                        query: Query)(implicit default: T := SimpleFeature): RDD[T] = {
+  override def read(conf: Configuration,
+                    sc: SparkContext,
+                    params: Map[String, String],
+                    query: Query): SpatialRDD = {
     val ds = DataStoreFinder.getDataStore(params).asInstanceOf[AccumuloDataStore]
     val username = AccumuloDataStoreParams.userParam.lookUp(params).toString
     val password = new PasswordToken(AccumuloDataStoreParams.passwordParam.lookUp(params).toString.getBytes)
@@ -65,14 +65,13 @@ class AccumuloSpatialRDDProvider extends SpatialRDDProvider {
       // get the query plan to set up the iterators, ranges, etc
       lazy val sft = ds.getSchema(query.getTypeName)
       lazy val qp = AccumuloJobUtils.getSingleQueryPlan(ds, query)
+      lazy val transform = query.getHints.getTransformSchema
 
-      if (ds == null || sft == null || qp.isInstanceOf[EmptyPlan]) {
-        sc.emptyRDD[T]
+      val rdd = if (ds == null || sft == null || qp.isInstanceOf[EmptyPlan]) {
+        sc.emptyRDD[SimpleFeature]
       } else {
         val instance = ds.connector.getInstance().getInstanceName
         val zookeepers = ds.connector.getInstance().getZooKeepers
-
-        val transform = query.getHints.getTransformSchema
 
         ConfiguratorBase.setConnectorInfo(classOf[AccumuloInputFormat], conf, username, password)
         if (Try(params("useMock").toBoolean).getOrElse(false)){
@@ -110,8 +109,11 @@ class AccumuloSpatialRDDProvider extends SpatialRDDProvider {
           InputConfigurator.setScanAuthorizations(classOf[AccumuloInputFormat], conf, authorizations)
         }
 
-        sc.newAPIHadoopRDD(conf, inputFormat[T], classOf[Text], classTag[T].runtimeClass.asInstanceOf[Class[T]]).map(U => U._2)
+        sc.newAPIHadoopRDD(conf, classOf[GeoMesaAccumuloInputFormat], classOf[Text], classOf[SimpleFeature]).map(U => U._2)
       }
+
+      SpatialRDD(rdd, transform.getOrElse(sft))
+
     } finally {
       if (ds != null) {
         ds.dispose()

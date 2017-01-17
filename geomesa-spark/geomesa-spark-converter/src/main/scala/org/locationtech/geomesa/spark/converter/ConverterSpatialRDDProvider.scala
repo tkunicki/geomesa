@@ -46,16 +46,15 @@ import scala.util.control.NonFatal
 class ConverterSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
 
   import ConverterSpatialRDDProvider.{ConverterKey, IngestTypeKey, FeatureNameKey, InputFilesKey, SftKey}
-  import org.locationtech.geomesa.spark.TypeDefault._
 
   override def canProcess(params: util.Map[String, Serializable]): Boolean =
     ((params.containsKey(ConverterKey) && params.containsKey(SftKey))
       || params.containsKey(IngestTypeKey)) && params.containsKey(InputFilesKey)
 
-  override def rdd[T : ClassTag](conf: Configuration,
-                                 sc: SparkContext,
-                                 params: Map[String, String],
-                                 query: Query)(implicit default: T := SimpleFeature): RDD[T] = {
+  override def read(conf: Configuration,
+                    sc: SparkContext,
+                    params: Map[String, String],
+                    query: Query): SpatialRDD = {
     val (sft, converterConf) = computeSftConfig(params, query)
 
     ConverterInputFormat.setConverterConfig(conf, converterConf)
@@ -75,7 +74,7 @@ class ConverterSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
     }
 
     val rdd = sc.newAPIHadoopRDD(conf, classOf[ConverterInputFormat], classOf[LongWritable], classOf[SimpleFeature])
-    rdd.map(_._2).asInstanceOf[RDD[T]]
+    SpatialRDD(rdd.map(_._2), sft)
   }
 
   // TODO:  Move the logic here and in the next function to utils (aka somewhere more general)

@@ -36,12 +36,12 @@ public class JavaSpatialRDDProvider {
     }
 
     public <T> JavaRDD<T> rdd(Configuration conf, JavaSparkContext jsc, Map<String, String> params, Query query, Class<T> clazz) {
-        return wrapped.rdd(conf,
+        return wrapped.<T>rdd(conf,
                 jsc.sc(),
                 toScalaMap(params),
                 query,
                 scala.reflect.ClassTag$.MODULE$.apply(clazz),
-                new TypeDefault.$colon$eq<T, SimpleFeature>()).toJavaRDD();
+                new TypeDefault.$colon$eq<T,SimpleFeature>()).toJavaRDD();
     }
 
     public void save(JavaRDD<SimpleFeature> jrdd, Map<String, String> params, String typeName) {
