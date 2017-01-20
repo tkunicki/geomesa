@@ -29,30 +29,20 @@ import org.locationtech.geomesa.jobs.GeoMesaConfigurator
 import org.locationtech.geomesa.jobs.accumulo.AccumuloJobUtils
 import org.locationtech.geomesa.jobs.mapreduce._
 import org.locationtech.geomesa.spark.SpatialRDDProvider
+import org.locationtech.geomesa.spark.SpatialRDDProvider.SpatialRDD
 import org.locationtech.geomesa.utils.geotools.FeatureUtils
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.filter.Filter
 
 import scala.collection.JavaConversions._
-import scala.reflect._
 import scala.util.Try
 
 class AccumuloSpatialRDDProvider extends SpatialRDDProvider {
   import org.locationtech.geomesa.spark.CaseInsensitiveMapFix._
-  import org.locationtech.geomesa.spark.TypeDefault._
+  import org.locationtech.geomesa.spark.SpatialRDDProvider.SpatialRDD
 
   override def canProcess(params: java.util.Map[String, java.io.Serializable]): Boolean =
     AccumuloDataStoreFactory.canProcess(params)
-
-//  def inputFormat[T : ClassTag](): Class[InputFormat[Text, T]] = {
-//    (classTag[T] match {
-//      case c if c == classTag[SimpleFeature] => classOf[GeoMesaAccumuloInputFormat]
-//      case c if c == classTag[String] => classOf[GeoMesaAccumuloGeoJsonInputFormat]
-//      case c if c == classTag[Array[Byte]] => classOf[GeoMesaAccumuloKryoInputFormat]
-//      case c if c == classTag[Map[String, String]] => classOf[GeoMesaAccumuloMapInputFormat]
-//      case _ => throw new IllegalArgumentException
-//    }).asInstanceOf[Class[InputFormat[Text, T]]]
-//  }
 
   override def read(conf: Configuration,
                     sc: SparkContext,
