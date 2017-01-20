@@ -19,6 +19,7 @@ import org.junit.runner.RunWith
 import org.locationtech.geomesa.features.ScalaSimpleFeature
 import org.locationtech.geomesa.spark.{GeoMesaSpark, GeoMesaSparkKryoRegistrator}
 import org.locationtech.geomesa.utils.geotools.SimpleFeatureTypes
+import org.opengis.feature.simple.SimpleFeature
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 
@@ -43,7 +44,7 @@ class GeoToolsSpatialRDDProviderTest extends Specification {
       val ds = DataStoreFinder.getDataStore(dsParams)
       ingestChicago(ds)
 
-      val rdd = GeoMesaSpark(dsParams).rdd(new Configuration(), sc, dsParams, new Query("chicago"))
+      val rdd = GeoMesaSpark(dsParams).rdd[SimpleFeature](new Configuration(), sc, dsParams, new Query("chicago"))
       rdd.count() mustEqual(3l)
     }
   }

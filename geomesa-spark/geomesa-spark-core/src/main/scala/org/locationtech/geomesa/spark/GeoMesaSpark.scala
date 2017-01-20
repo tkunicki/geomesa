@@ -11,58 +11,26 @@ package org.locationtech.geomesa.spark
 import java.io.{BufferedWriter, StringWriter}
 import java.util.ServiceLoader
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.conf.Configuration
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.serializer.KryoSerializer
 import org.geotools.data.Query
 import org.geotools.geojson.feature.FeatureJSON
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 
 import scala.collection.JavaConversions._
-import scala.reflect._
 
-trait SpatialRDDProvider {
-  import TypeDefault._
-
-  type GeoJSONString = String
-
-  def toScalaMap(in: SpatialRDD): RDD[Map[String, AnyRef]] = {
-    val keys = in.schema.getAttributeDescriptors.map(_.getName).map(_.getLocalPart)
-    in.rdd.map(sf => keys.zip(sf.getAttributes).toMap).map(m => m + ("geom" -> m("geom").toString))
-  }
-
-  def toJavaMap(in: SpatialRDD): RDD[java.util.Map[String, AnyRef]] = {
-    toScalaMap(in).map(mapAsJavaMap)
-  }
-
-  def toGeoJSONString(in: SpatialRDD): RDD[GeoJSONString] = {
-    in.rdd.mapPartitions(features => {
-      val json = new FeatureJSON
-      val sw = new StringWriter
-      val bw = new BufferedWriter(sw)
-      features.map(f => try { json.writeFeature(f, bw); sw.toString } finally { sw.getBuffer.setLength(0) })
-    })
-  }
-
-  def transformFunc[A : ClassTag]: (SpatialRDD => RDD[A]) = (classTag[A] match {
-    case ct if ct == classTag[GeoJSONString] => toGeoJSONString _
-    case ct if ct == classTag[Map[String, AnyRef]] => toScalaMap _
-    case ct if ct == classTag[java.util.Map[String, AnyRef]] => toJavaMap _
-    case ct if ct == classTag[SimpleFeature] => in: SpatialRDD => in.rdd
-    case _ => new IllegalArgumentException
-  }).asInstanceOf[SpatialRDD => RDD[A]]
+trait SpatialRDDProvider extends LazyLogging {
+  import org.locationtech.geomesa.spark.SpatialRDDProvider._
 
   def canProcess(params: java.util.Map[String, java.io.Serializable]): Boolean
 
-  def rdd[T : ClassTag](conf: Configuration,
-             sc: SparkContext,
-             params: Map[String, String],
-             query: Query)(implicit default: T := SimpleFeature): RDD[T] = {
-      val tf = transformFunc[T]
-      tf(read(conf, sc, params, query))
+  def rdd[T](conf: Configuration, sc: SparkContext, params: Map[String, String], query: Query)
+                       (implicit format: Format[T]): RDD[T] = {
+    format.transform(read(conf, sc, params, query))
   }
-
-  case class SpatialRDD(rdd: RDD[SimpleFeature], schema: SimpleFeatureType)
 
   protected def read(conf: Configuration,
                      sc: SparkContext,
@@ -110,15 +78,73 @@ object CaseInsensitiveMapFix {
   }
 }
 
-object TypeDefault {
+object SpatialRDDProvider extends LazyLogging {
 
-  class :=[P,D]
+  case class SpatialRDD(rdd: RDD[SimpleFeature], schema: SimpleFeatureType)
 
-  trait Default_:={
-    implicit def useProvided[Provided,Default] = new :=[Provided,Default]
+  def toValueSeq(in: SpatialRDD): RDD[Seq[AnyRef]] =
+    in.rdd.map(_.getAttributes)
+
+  def toKeyValueSeq(in: SpatialRDD): RDD[Seq[(String, AnyRef)]] = {
+    val keys = in.schema.getAttributeDescriptors.map(_.getName).map(_.getLocalPart)
+    toValueSeq(in).map(l => keys.zip(l))
   }
 
-  object := extends Default_:={
-    implicit def useDefault[Default] = new :=[Default,Default]
+  def toScalaMap(in: SpatialRDD): RDD[Map[String, AnyRef]] = {
+    val keys = in.schema.getAttributeDescriptors.map(_.getName).map(_.getLocalPart)
+    in.rdd.map(sf => keys.zip(sf.getAttributes).toMap)
+  }
+
+  def toJavaMap(in: SpatialRDD): RDD[java.util.Map[String, AnyRef]] = {
+    toScalaMap(in).map(mapAsJavaMap)
+  }
+
+  def toGeoJSONString(in: SpatialRDD): RDD[String] = {
+    in.rdd.mapPartitions(features => {
+      val json = new FeatureJSON
+      val sw = new StringWriter
+      val bw = new BufferedWriter(sw)
+      features.map(f => try {
+        json.writeFeature(f, bw); sw.toString
+      } finally {
+        sw.getBuffer.setLength(0)
+      })
+    })
+  }
+
+  def toSimpleFeature(in: SpatialRDD): RDD[SimpleFeature] = {
+    val c = in.rdd.context.getConf
+    if (c.getOption("spark.serializer").exists(_ == classOf[KryoSerializer].getName) &&
+      c.getOption("spark.kryo.registrator").exists(_ == classOf[GeoMesaSparkKryoRegistrator].getName)) {
+      GeoMesaSparkKryoRegistrator.register(in.schema)
+      GeoMesaSparkKryoRegistrator.broadcast(in.rdd)
+    } else {
+      logger.warn(s"Unable to register SimpleFeatureType for ${in.schema.getTypeName}, kryo serializer not configured.")
+    }
+    in.rdd
+  }
+
+  trait Format[T] {
+    def transform(in: SpatialRDD): RDD[T]
+  }
+
+  implicit object SimpleFeatureFormat extends Format[SimpleFeature] {
+    def transform(in: SpatialRDD) = toSimpleFeature(in)
+  }
+
+  object NoOpFormat extends Format[SimpleFeature] {
+    def transform(in: SpatialRDD) = in.rdd
+  }
+
+  implicit object ScalaMapFormat extends Format[Map[String, AnyRef]] {
+    def transform(in: SpatialRDD) = toScalaMap(in)
+  }
+
+  implicit object JavaMapFormat extends Format[java.util.Map[String, AnyRef]] {
+    def transform(in: SpatialRDD) = toJavaMap(in)
+  }
+
+  implicit object GeoJSONStringFormat extends Format[String] {
+    def transform(in: SpatialRDD) = toGeoJSONString(in)
   }
 }

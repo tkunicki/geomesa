@@ -15,6 +15,7 @@ import org.geotools.data.Query
 import org.geotools.filter.text.ecql.ECQL
 import org.junit.runner.RunWith
 import org.locationtech.geomesa.spark.{GeoMesaSpark, GeoMesaSparkKryoRegistrator}
+import org.opengis.feature.simple.SimpleFeature
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 
@@ -47,7 +48,7 @@ class ConverterSpatialRDDProviderTest extends Specification {
 
   "The ConverterSpatialRDDProvider" should {
     "read from local files" in {
-      val rdd = GeoMesaSpark(params).rdd(new Configuration(), sc, params, new Query("example-csv"))
+      val rdd = GeoMesaSpark(params).rdd[SimpleFeature](new Configuration(), sc, params, new Query("example-csv"))
       rdd.count() mustEqual 3l
       rdd.collect.map(_.getAttribute("name").asInstanceOf[String]).toList must
           containTheSameElementsAs(Seq("Harry", "Hermione", "Severus"))
@@ -55,7 +56,7 @@ class ConverterSpatialRDDProviderTest extends Specification {
 
     "read from local files with filtering" in {
       val query = new Query("example-csv", ECQL.toFilter("name like 'H%'"))
-      val rdd = GeoMesaSpark(params).rdd(new Configuration(), sc, params, query)
+      val rdd = GeoMesaSpark(params).rdd[SimpleFeature](new Configuration(), sc, params, query)
       rdd.count() mustEqual 2l
       rdd.collect.map(_.getAttribute("name").asInstanceOf[String]).toList must
           containTheSameElementsAs(Seq("Harry", "Hermione"))
@@ -67,7 +68,7 @@ class ConverterSpatialRDDProviderTest extends Specification {
         IngestTypeKey -> "example-csv"
       )
 
-      val rdd = GeoMesaSpark(params).rdd(new Configuration(), sc, params, new Query("example-csv"))
+      val rdd = GeoMesaSpark(params).rdd[SimpleFeature](new Configuration(), sc, params, new Query("example-csv"))
       rdd.count() mustEqual 3l
     }
   }

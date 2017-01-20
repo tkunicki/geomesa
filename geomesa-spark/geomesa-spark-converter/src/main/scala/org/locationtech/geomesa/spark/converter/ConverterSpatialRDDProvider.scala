@@ -29,7 +29,6 @@ import org.locationtech.geomesa.utils.io.CloseQuietly
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 import org.opengis.filter.Filter
 
-import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 
 /**
@@ -46,6 +45,7 @@ import scala.util.control.NonFatal
 class ConverterSpatialRDDProvider extends SpatialRDDProvider with LazyLogging {
 
   import ConverterSpatialRDDProvider.{ConverterKey, IngestTypeKey, FeatureNameKey, InputFilesKey, SftKey}
+  import org.locationtech.geomesa.spark.SpatialRDDProvider.SpatialRDD
 
   override def canProcess(params: util.Map[String, Serializable]): Boolean =
     ((params.containsKey(ConverterKey) && params.containsKey(SftKey))
