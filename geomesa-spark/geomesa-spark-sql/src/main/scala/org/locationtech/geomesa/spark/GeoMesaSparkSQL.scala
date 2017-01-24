@@ -25,7 +25,6 @@ import org.geotools.data.{DataStoreFinder, Query}
 import org.geotools.factory.{CommonFactoryFinder, Hints}
 import org.geotools.feature.simple.{SimpleFeatureBuilder, SimpleFeatureTypeBuilder}
 import org.locationtech.geomesa.utils.geotools.{SftArgResolver, SftArgs, SimpleFeatureTypes}
-import org.locationtech.geomesa.spark.SpatialRDDProvider.{Format, SpatialRDD}
 import org.opengis.feature.`type`._
 import org.opengis.feature.simple.{SimpleFeature, SimpleFeatureType}
 
@@ -224,8 +223,8 @@ object SparkUtils extends LazyLogging {
     logger.debug(s"compiledCQL = $compiledCQL")
 
     val requiredAttributes = requiredColumns.filterNot(_ == "__fid__")
-    // specify no-op format to side-step auto-kryo registation (and warning if kryo serialization not setup)
-    implicit val format = new Format[SimpleFeature] { def transform(in: SpatialRDD): RDD[SimpleFeature] = in.rdd }
+    // specify to side-step kryo auto-registration (and warning if kryo serialization not configured)
+    implicit val transform = SpatialRDDProvider.toSimpleFeature
     val rdd = GeoMesaSpark(params).rdd[SimpleFeature](
       new Configuration(), ctx, params,
       new Query(params(GEOMESA_SQL_FEATURE), compiledCQL, requiredAttributes))

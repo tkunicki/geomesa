@@ -11,35 +11,55 @@ package org.locationtech.geomesa.spark.api.java;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.rdd.RDD;
 import org.geotools.data.Query;
 import org.locationtech.geomesa.spark.SpatialRDDProvider;
+import org.locationtech.geomesa.spark.SpatialRDDProvider$;
 import org.locationtech.geomesa.spark.SpatialRDDProvider.*;
 import org.opengis.feature.simple.SimpleFeature;
+import scala.Function1;
 
 import java.io.Serializable;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class JavaSpatialRDDProvider {
 
-    interface JavaFormat<T> {
-        Format<T> wrapped();
+    @FunctionalInterface
+    public interface JavaTransform<T>  {
+        JavaRDD<T> apply(SpatialRDD spatialRDD);
     }
 
-    private static class FormatWrapper<T> implements JavaFormat<T> {
-        private final Format<T> wrapped;
-        FormatWrapper(Format<T> wrapped) {
-            this.wrapped = wrapped;
-        }
-        public Format<T> wrapped() { return wrapped; }
+    public static <T> JavaTransform<T> wrap(Function1<SpatialRDD, RDD<T>> transform) {
+        return in -> transform.apply(in).toJavaRDD();
     }
 
-    public static <T> FormatWrapper<T> wrap(Format<T> format) {
-        return new FormatWrapper<T>(format);
-    }
-
-    public static final JavaFormat<SimpleFeature> SimpleFeatureFormat = wrap(SimpleFeatureFormat$.MODULE$);
-    public static final JavaFormat<Map<String, Object>> JavaMapFormat = wrap(JavaMapFormat$.MODULE$);
-    public static final JavaFormat<String> GeoJSONStringFormat = wrap(SpatialRDDProvider.GeoJSONStringFormat$.MODULE$);
+    public static final JavaTransform<SimpleFeature> SimpleFeatureTransform =
+            wrap(SpatialRDDProvider$.MODULE$.toSimpleFeatureWithKryoRegistration());
+    public static final JavaTransform<List<Object>> ValueListTransform =
+            wrap(SpatialRDDProvider$.MODULE$.toValueList());
+    public static final JavaTransform<List<Entry<String,Object>>> KeyValueListTransform =
+            wrap(SpatialRDDProvider$.MODULE$.toKeyValueList());
+    public static final JavaTransform<Map<String, Object>> MapTransform =
+            wrap(SpatialRDDProvider$.MODULE$.toJavaMap());
+    public static final JavaTransform<String> GeoJSONStringTransform =
+            wrap(SpatialRDDProvider$.MODULE$.toGeoJSONString());
+    public static final JavaTransform<List<Object>> PyValueListTransform =
+            in -> {
+                int i = in.schema().indexOf("geom");
+                return ValueListTransform.apply(in).map(l -> { l.set(i, l.get(i).toString()); return l;} );
+            };
+    public static final JavaTransform<List<Object>> PyKeyValueListTransform =
+            in -> {
+                int i = in.schema().indexOf("geom");
+                return KeyValueListTransform.apply(in).map(l -> {
+                    l.set(i, new SimpleEntry("geom", l.get(i).toString())); return l;
+                });
+            };
+    public static final JavaTransform<Map<String, Object>> PyMapTransform =
+            in -> MapTransform.apply(in).map(m -> { m.put("geom", m.get("geom").toString()); return m;} );
 
     private final SpatialRDDProvider wrapped;
 
@@ -52,15 +72,11 @@ public class JavaSpatialRDDProvider {
     }
 
     public JavaRDD<SimpleFeature> rdd(Configuration conf, JavaSparkContext jsc, Map<String, String> params, Query query) {
-        return rdd(conf, jsc, params, query, SimpleFeatureFormat);
+        return rdd(conf, jsc, params, query, SimpleFeatureTransform);
     }
 
-    public <T> JavaRDD<T> rdd(Configuration conf, JavaSparkContext jsc, Map<String, String> params, Query query, JavaFormat<T> format) {
-        return wrapped.rdd(conf,
-                jsc.sc(),
-                toScalaMap(params),
-                query,
-                format.wrapped()).toJavaRDD();
+    public <T> JavaRDD<T> rdd(Configuration conf, JavaSparkContext jsc, Map<String, String> params, Query query, JavaTransform<T> transform) {
+        return transform.apply(wrapped.read(conf, jsc.sc(), toScalaMap(params), query));
     }
 
     public void save(JavaRDD<SimpleFeature> jrdd, Map<String, String> params, String typeName) {
