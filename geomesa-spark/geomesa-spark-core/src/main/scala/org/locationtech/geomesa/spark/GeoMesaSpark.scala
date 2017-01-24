@@ -9,6 +9,8 @@
 package org.locationtech.geomesa.spark
 
 import java.io.{BufferedWriter, StringWriter}
+import java.util
+import java.util.AbstractMap.SimpleEntry
 import java.util.ServiceLoader
 
 import com.typesafe.scalalogging.LazyLogging
@@ -28,8 +30,8 @@ trait SpatialRDDProvider extends LazyLogging {
   def canProcess(params: java.util.Map[String, java.io.Serializable]): Boolean
 
   def rdd[T](conf: Configuration, sc: SparkContext, params: Map[String, String], query: Query)
-                       (implicit format: Format[T]): RDD[T] = {
-    format.transform(read(conf, sc, params, query))
+                       (implicit transform: SpatialRDD => RDD[T]): RDD[T] = {
+    transform(read(conf, sc, params, query))
   }
 
   protected def read(conf: Configuration,
@@ -82,24 +84,30 @@ object SpatialRDDProvider extends LazyLogging {
 
   case class SpatialRDD(rdd: RDD[SimpleFeature], schema: SimpleFeatureType)
 
-  def toValueSeq(in: SpatialRDD): RDD[Seq[AnyRef]] =
-    in.rdd.map(_.getAttributes)
+  implicit def toValueSeq: SpatialRDD => RDD[Seq[AnyRef]] =
+    _.rdd.map(_.getAttributes)
 
-  def toKeyValueSeq(in: SpatialRDD): RDD[Seq[(String, AnyRef)]] = {
+  implicit def toValueList: SpatialRDD => RDD[util.List[AnyRef]] =
+    toValueSeq(_).map(new util.ArrayList[AnyRef](_))
+
+  implicit def toKeyValueSeq: SpatialRDD => RDD[Seq[(String, AnyRef)]] = in => {
     val keys = in.schema.getAttributeDescriptors.map(_.getName).map(_.getLocalPart)
     toValueSeq(in).map(l => keys.zip(l))
   }
 
-  def toScalaMap(in: SpatialRDD): RDD[Map[String, AnyRef]] = {
+  implicit def toKeyValueList: SpatialRDD => RDD[util.List[util.Map.Entry[String, AnyRef]]] =
+    toKeyValueSeq(_).map(_.map(t => new SimpleEntry(t._1, t._2)))
+        .map(new util.ArrayList[util.Map.Entry[String, AnyRef]](_))
+
+  implicit def toScalaMap: SpatialRDD => RDD[Map[String, AnyRef]] = in => {
     val keys = in.schema.getAttributeDescriptors.map(_.getName).map(_.getLocalPart)
     in.rdd.map(sf => keys.zip(sf.getAttributes).toMap)
   }
 
-  def toJavaMap(in: SpatialRDD): RDD[java.util.Map[String, AnyRef]] = {
-    toScalaMap(in).map(mapAsJavaMap)
-  }
+  implicit def toJavaMap: SpatialRDD => RDD[java.util.Map[String, AnyRef]] =
+    toScalaMap(_).map(new util.HashMap[String, AnyRef](_))
 
-  def toGeoJSONString(in: SpatialRDD): RDD[String] = {
+  implicit def toGeoJSONString: SpatialRDD => RDD[String] = in => {
     in.rdd.mapPartitions(features => {
       val json = new FeatureJSON
       val sw = new StringWriter
@@ -112,7 +120,7 @@ object SpatialRDDProvider extends LazyLogging {
     })
   }
 
-  def toSimpleFeature(in: SpatialRDD): RDD[SimpleFeature] = {
+  implicit def toSimpleFeatureWithKryoRegistration: SpatialRDD => RDD[SimpleFeature] = in => {
     val c = in.rdd.context.getConf
     if (c.getOption("spark.serializer").exists(_ == classOf[KryoSerializer].getName) &&
       c.getOption("spark.kryo.registrator").exists(_ == classOf[GeoMesaSparkKryoRegistrator].getName)) {
@@ -124,27 +132,5 @@ object SpatialRDDProvider extends LazyLogging {
     in.rdd
   }
 
-  trait Format[T] {
-    def transform(in: SpatialRDD): RDD[T]
-  }
-
-  implicit object SimpleFeatureFormat extends Format[SimpleFeature] {
-    def transform(in: SpatialRDD) = toSimpleFeature(in)
-  }
-
-  object NoOpFormat extends Format[SimpleFeature] {
-    def transform(in: SpatialRDD) = in.rdd
-  }
-
-  implicit object ScalaMapFormat extends Format[Map[String, AnyRef]] {
-    def transform(in: SpatialRDD) = toScalaMap(in)
-  }
-
-  implicit object JavaMapFormat extends Format[java.util.Map[String, AnyRef]] {
-    def transform(in: SpatialRDD) = toJavaMap(in)
-  }
-
-  implicit object GeoJSONStringFormat extends Format[String] {
-    def transform(in: SpatialRDD) = toGeoJSONString(in)
-  }
+  def toSimpleFeature: SpatialRDD => RDD[SimpleFeature] = _.rdd
 }
