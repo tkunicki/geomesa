@@ -24,6 +24,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class JavaSpatialRDDProvider {
 
@@ -51,12 +52,14 @@ public class JavaSpatialRDDProvider {
                 int i = in.schema().indexOf("geom");
                 return ValueListTransform.apply(in).map(l -> { l.set(i, l.get(i).toString()); return l;} );
             };
-    public static final JavaTransform<List<Object>> PyKeyValueListTransform =
+    public static final JavaTransform<List<Object[]>> PyKeyValueListTransform =
             in -> {
-                int i = in.schema().indexOf("geom");
-                return KeyValueListTransform.apply(in).map(l -> {
-                    l.set(i, new SimpleEntry("geom", l.get(i).toString())); return l;
-                });
+                final int i = in.schema().indexOf("geom");
+                return KeyValueListTransform.apply(in).
+                        map(l -> l.stream().
+                                map(e -> new Object[] { e.getKey(), e.getValue()}).
+                                collect(Collectors.toList())).
+                        map(l -> { l.get(i)[1] = l.get(i)[1].toString(); return l; });
             };
     public static final JavaTransform<Map<String, Object>> PyMapTransform =
             in -> MapTransform.apply(in).map(m -> { m.put("geom", m.get("geom").toString()); return m;} );
