@@ -5,8 +5,5 @@ setup(
     version='0.0.1',
     author='Tom Kunicki, Gerard C. Briones',
     author_email='tkunicki@ccri.com, gbriones@ccri.com',
-    packages=find_packages(),
-    install_requires=[
-        'py4j'
-    ]
+    packages=find_packages()
 )
