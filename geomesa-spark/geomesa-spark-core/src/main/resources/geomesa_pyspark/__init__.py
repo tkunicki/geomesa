@@ -51,7 +51,7 @@ def process_spark_home(spark_home):
         spark_home = os.environ.get('SPARK_HOME', None)
     assert spark_home is not None, "unable to resolve SPARK_HOME"
     assert os.path.isdir(spark_home), "%s is not a directory" % spark_home
-    return spark_home;
+    return spark_home
 
 
 def process_executor_packages(executor_packages, tmp_path=None):
